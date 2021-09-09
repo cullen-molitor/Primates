@@ -10,6 +10,19 @@ library(metafor)
 ```
 
 ```{r , include=FALSE}
-primates <- read_csv(here("Gardner_et_al_data-KAR35vs02_onlyprimates_nospaces.csv"))
+dat_rich <- read_csv(here("Gardner_et_al_data-KAR35vs02_onlyprimates_nospaces.csv"))
 ```
+
+```{r}
+dat_rich_2 <- dat_rich %>% 
+  dplyr::mutate(
+    UMD = MeanvalueatLowFauna - MeanvalueatHighFauna,
+    s_within = sqrt(
+      ((HighFaunaN - 1) * (SDatHighFauna ^ 2) + (LowFaunaN - 1) * (SDatLowFauna ^ 2) ) 
+      /
+      (HighFaunaN - 1 + LowFaunaN - 1)),
+    UMD_SE = s_within * sqrt((1/HighFaunaN) + (1 / LowFaunaN)))
+```
+
+
 
