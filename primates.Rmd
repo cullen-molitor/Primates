@@ -18,11 +18,36 @@ dat_rich_2 <- dat_rich %>%
   dplyr::mutate(
     UMD = MeanvalueatLowFauna - MeanvalueatHighFauna,
     s_within = sqrt(
-      ((HighFaunaN - 1) * (SDatHighFauna ^ 2) + (LowFaunaN - 1) * (SDatLowFauna ^ 2) ) 
-      /
-      (HighFaunaN - 1 + LowFaunaN - 1)),
-    UMD_SE = s_within * sqrt((1/HighFaunaN) + (1 / LowFaunaN)))
+      ( (LowFaunaN - 1) * (SDatLowFauna ^ 2) + (HighFaunaN - 1) * (SDatHighFauna ^ 2) ) 
+      / ((LowFaunaN - 1) + (HighFaunaN - 1) )
+    ),
+    UMD_SE = s_within * sqrt((1/HighFaunaN) + (1 / LowFaunaN)),
+    SMD = UMD / s_within,
+    J = 1 - 3 / (4 * (LowFaunaN + HighFaunaN - 2 ) - 1 ),
+    G = SMD * J,
+    G_SE = sqrt(
+      (((LowFaunaN + HighFaunaN) / (LowFaunaN * HighFaunaN)) + ((G ^ 2) / (2 * (LowFaunaN + HighFaunaN))))
+    ),
+    W = 1 / (G_SE ^ 2),
+    GW = G * W)
+
+pooled_fixed_effect <- dat_rich_2 %>% 
+  summarise(pooled_fixed_effect = sum(GW) / sum(W)) %>% 
+  pull()
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
